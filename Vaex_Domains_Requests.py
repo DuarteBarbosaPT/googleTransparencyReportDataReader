@@ -1,5 +1,6 @@
 import vaex
 import os
+import pprint
 
 # Define file paths
 requests_csv = "requests.csv"
@@ -27,11 +28,13 @@ df_domains = vaex.open(domains_hdf5) if os.path.isfile(domains_hdf5) else vaex.f
 print("Domains loaded with success")
 
 # Join the two dataframes on 'Request ID' column
-result_domains_filtered_by_date = df_domains.join(df_requests_filtered_by_date, on='Request ID', how='inner', lsuffix='_left', rsuffix='_right', allow_duplication=True)
+#result_domains_filtered_by_date = df_domains.join(df_requests_filtered_by_date[['Request ID', 'Date']], on='Request ID', how='left')
+result_domains_filtered_by_date = df_domains.join(df_requests_filtered_by_date[['Request ID', 'Date']], on='Request ID', how='inner')
 
 print("Domains filtered by date with success")
 
 # Count and print the number of rows in the resulting dataframe
 print(f'Theres a total of {result_domains_filtered_by_date.count()} domains filtered by date.')
 
-#result_domains_filtered_by_date.export_csv(export_csv_folder, progress=True)
+#result_domains_filtered_by_date.export_csv_arrow("arrow_" + export_csv_folder, progress=True)
+result_domains_filtered_by_date.export_csv(export_csv_folder, progress=True)
